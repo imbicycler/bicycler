@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
 import { mkdirp } from 'mkdirp'
+import { glob } from 'glob'
 
 const readFile = (filename) => {
     const rawFile = fs.readFileSync(filename, 'utf8')
@@ -42,8 +43,15 @@ const processFile = (filename, template, outPath) => {
     saveFile(outFilename, templatized)
 }
 
-const template = fs.readFileSync(path.join(path.resolve(), 'src/template.html'), 'utf8')
-const filename = path.join(path.resolve(), 'src/241009 마크다운 문법 소개.md')
-const outPath = path.join(path.resolve(), 'dist')
+const main = () => {
+    const srcPath = path.join(path.resolve(), 'src')
+    const outPath = path.join(path.resolve(), 'dist')
+    const template = fs.readFileSync(path.join(srcPath, 'template.html'), 'utf8')
 
-processFile(filename, template, outPath)
+    const filenames = glob.sync(path.join(srcPath, '/posts/**/*.md'))
+    filenames.forEach(filename => {
+        processFile(filename, template, outPath)
+    })
+}
+
+main()
