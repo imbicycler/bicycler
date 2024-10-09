@@ -15,8 +15,10 @@
 - [x] ~~빌드 및 배포 자동화 테스트~~
     - [x] ~~GitHub Actions 수정~~
 - [ ] Static Site Generator 기본 구현
-    - [ ](Refactoring) index.js 파일을 src 폴더로 이동
-    - [ ] 마크다운 파일을 html 코드로 변환
-    - [ ] template 파일에 html 코드 삽입된 html 코드 생성
-    - [ ] dist 폴더에 html 파일 생성
+    - [x] ~~(Refactoring) index.js 파일을 src 폴더로 이동~~
+    - [ ] 마크다운 파일 읽기
+    - [ ] front-matter 처리
+    - [ ] 마크다운 본문 읽기
+    - [ ] 템플릿 파일(html)에 주입
+    - [ ] dist 폴더에 html 파일 저장
 
