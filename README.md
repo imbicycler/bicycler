@@ -12,3 +12,7 @@
     - [x] ~~index.html 샘플 페이지 작성~~
     - [x] ~~GitHub Pages 연동~~
     - [x] ~~브라우저를 통한 배포 확인~~
+- [ ] 빌드 및 배포 자동화 테스트
+    - [ ] GitHub Actions 수정
+        - push 이벤트가 발생하면 index.js 실행
+        - 실행 결과를 확인하고 dist 배포
