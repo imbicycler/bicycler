@@ -18,7 +18,7 @@
     - [x] ~~(Refactoring) index.js 파일을 src 폴더로 이동~~
     - [x] ~~마크다운 파일 읽기~~
     - [x] ~~front-matter 처리~~
-    - [ ] 마크다운 본문을 html 코드로 변환
+    - [x] ~~마크다운 본문을 html 코드로 변환~~
     - [ ] 템플릿 파일(html)에 주입
     - [ ] dist 폴더에 html 파일 저장
 
