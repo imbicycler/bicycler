@@ -20,5 +20,5 @@
     - [x] ~~front-matter 처리~~
     - [x] ~~마크다운 본문을 html 코드로 변환~~
     - [x] ~~템플릿 파일(html)에 주입~~
-    - [ ] dist 폴더에 html 파일 저장
+    - [x] ~~dist 폴더에 html 파일 저장~~
 

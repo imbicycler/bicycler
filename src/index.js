@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
+import { mkdirp } from 'mkdirp'
 
 const readFile = (filename) => {
     const rawFile = fs.readFileSync(filename, 'utf8')
@@ -17,13 +18,28 @@ const templatize = (template, { title, date, content }) =>
         .replace(/{{ title }}/g, title)
         .replace(/{{ date }}/g, date)
 
+const getOutputFilename = (filename, outPath) => {
+    const basename = path.basename(filename)
+    const newFilename = basename.substring(0, basename.length - 3) + '.html'
+    const outFile = path.join(outPath, newFilename)
+    return outFile
+}
+
+const saveFile = (filename, content) => {
+    const dir = path.dirname(filename)
+    mkdirp.sync(dir)
+    fs.writeFileSync(filename, content)
+}
 
 const template = fs.readFileSync(path.join(path.resolve(), 'src/template.html'), 'utf8')
-const file = readFile(path.join(path.resolve(), 'src/241009 마크다운 문법 소개.md'))
+const filename = path.join(path.resolve(), 'src/241009 마크다운 문법 소개.md')
+const file = readFile(filename)
+const outPath = path.join(path.resolve(), 'dist')
+const outFilename = getOutputFilename(filename, outPath)
 const templatized = templatize(template, {
     date: file.data.date,
     title: file.data.title,
     content: file.html
 })
 
-console.log(templatized)
+saveFile(outFilename, templatized)
