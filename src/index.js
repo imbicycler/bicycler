@@ -31,15 +31,19 @@ const saveFile = (filename, content) => {
     fs.writeFileSync(filename, content)
 }
 
+const processFile = (filename, template, outPath) => {
+    const file = readFile(filename)
+    const outFilename = getOutputFilename(filename, outPath)
+    const templatized = templatize(template, {
+        date: file.data.date,
+        title: file.data.title,
+        content: file.html
+    })
+    saveFile(outFilename, templatized)
+}
+
 const template = fs.readFileSync(path.join(path.resolve(), 'src/template.html'), 'utf8')
 const filename = path.join(path.resolve(), 'src/241009 마크다운 문법 소개.md')
-const file = readFile(filename)
 const outPath = path.join(path.resolve(), 'dist')
-const outFilename = getOutputFilename(filename, outPath)
-const templatized = templatize(template, {
-    date: file.data.date,
-    title: file.data.title,
-    content: file.html
-})
 
-saveFile(outFilename, templatized)
+processFile(filename, template, outPath)
