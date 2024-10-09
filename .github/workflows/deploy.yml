@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-test:
+  run-static-site-generator:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run index.js
-        run: node index.js
+      - name: Run static site generator
+        run: npm start
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -38,7 +38,7 @@ jobs:
           path: './dist'
 
   deploy:
-    needs: build-and-test
+    needs: run-static-site-generator
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

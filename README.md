@@ -12,7 +12,11 @@
     - [x] ~~index.html 샘플 페이지 작성~~
     - [x] ~~GitHub Pages 연동~~
     - [x] ~~브라우저를 통한 배포 확인~~
-- [ ] 빌드 및 배포 자동화 테스트
-    - [ ] GitHub Actions 수정
-        - push 이벤트가 발생하면 index.js 실행
-        - 실행 결과를 확인하고 dist 배포
+- [x] ~~빌드 및 배포 자동화 테스트~~
+    - [x] ~~GitHub Actions 수정~~
+- [ ] Static Site Generator 기본 구현
+    - [ ](Refactoring) index.js 파일을 src 폴더로 이동
+    - [ ] 마크다운 파일을 html 코드로 변환
+    - [ ] template 파일에 html 코드 삽입된 html 코드 생성
+    - [ ] dist 폴더에 html 파일 생성
+
