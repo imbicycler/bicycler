@@ -86,6 +86,7 @@ const copyAssets = async (assetReferences, srcDir, destDir, content) => {
                 // Convert to WebP
                 const webpDestPath = destPath.replace(ext, '.webp');
                 await sharp(srcPath)
+                    .resize({ width: 1200, withoutEnlargement: true })
                     .webp({ quality: 80 })
                     .toFile(webpDestPath);
                 console.log(`Converted and copied asset: ${srcPath} -> ${webpDestPath}`);
