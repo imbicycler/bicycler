@@ -5,10 +5,11 @@ import { marked, Lexer } from 'marked'
 import { mkdirp } from 'mkdirp'
 import { glob } from 'glob'
 import sharp from 'sharp'
+import ejs from 'ejs'
 
 const SRC_PATH = path.join(path.resolve(), 'src')
 const OUT_PATH = path.join(path.resolve(), 'dist')
-const TEMPLATE_FILE = path.join(SRC_PATH, 'templates/note.html')
+const TEMPLATE_FILE = path.join(SRC_PATH, 'templates/notes/note.html')
 const NOTES_PATTERN = path.join(SRC_PATH, 'notes/**/*.md')
 
 const findAssetReferences = (markdownContent) => {
@@ -119,12 +120,15 @@ const processFile = async (filename, template) => {
 
         const html = marked(updatedContent)
         const outFilename = getOutputFilename(filename)
-        const templatized = templatize(template, {
+        
+        // Use ejs to render the template
+        const renderedHtml = ejs.render(template, {
             date: data.date,
             title: data.title,
             content: html
         })
-        await saveFile(outFilename, templatized)
+        
+        await saveFile(outFilename, renderedHtml)
         console.log(`Processed: ${filename} -> ${outFilename}`)
     } catch (error) {
         console.error(`Error processing file ${filename}:`, error)

@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -e js,md,html --ignore dist/ src/index.js README.md",
+    "clean": "rimraf dist/",
+    "prestart": "npm run clean",
     "start": "node src/index.js"
   },
   "keywords": [],
@@ -12,6 +14,7 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "ejs": "^3.1.10",
     "glob": "^11.0.0",
     "gray-matter": "^4.0.3",
     "marked": "^14.1.2",
@@ -19,6 +22,7 @@
     "sharp": "^0.33.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "rimraf": "^5.0.5"
   }
 }
