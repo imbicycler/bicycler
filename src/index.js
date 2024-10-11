@@ -9,7 +9,6 @@ import ejs from 'ejs'
 
 const SRC_PATH = path.join(path.resolve(), 'src')
 const OUT_PATH = path.join(path.resolve(), 'dist')
-const TEMPLATE_FILE = path.join(SRC_PATH, 'templates/notes/note.html')
 const NOTES_PATTERN = path.join(SRC_PATH, 'notes/**/*.md')
 
 const findAssetReferences = (markdownContent) => {
@@ -110,7 +109,12 @@ const copyAssets = async (assetReferences, srcDir, destDir, content) => {
     return updatedContent;
 }
 
-const processFile = async (filename, template) => {
+const getTemplateFile = (layout) => {
+    // Assume layout always includes the file extension
+    return path.join(SRC_PATH, 'layouts', layout)
+}
+
+const processFile = async (filename) => {
     try {
         let fileContent = await fs.readFile(filename, 'utf8')
         const { data, content: originalContent } = matter(fileContent)
@@ -119,16 +123,26 @@ const processFile = async (filename, template) => {
         // Copy assets and get updated content
         const updatedContent = await copyAssets(assetReferences, SRC_PATH, OUT_PATH, originalContent)
 
-        const html = marked(updatedContent)
+        let renderedHtml
+        if (data.layout) {
+            // If layout is specified, use the template
+            const templateFile = getTemplateFile(data.layout)
+            const template = await fs.readFile(templateFile, 'utf8')
+            
+            const html = marked(updatedContent)
+            
+            // Use ejs to render the template
+            renderedHtml = ejs.render(template, {
+                date: data.date,
+                title: data.title,
+                content: html
+            })
+        } else {
+            // If no layout is specified, just convert markdown to HTML
+            renderedHtml = marked(updatedContent)
+        }
+        
         const outFilename = getOutputFilename(filename)
-        
-        // Use ejs to render the template
-        const renderedHtml = ejs.render(template, {
-            date: data.date,
-            title: data.title,
-            content: html
-        })
-        
         await saveFile(outFilename, renderedHtml)
         console.log(`Processed: ${filename} -> ${outFilename}`)
     } catch (error) {
@@ -138,9 +152,8 @@ const processFile = async (filename, template) => {
 
 const main = async () => {
     try {
-        const template = await fs.readFile(TEMPLATE_FILE, 'utf8')
         const markdownFilenames = await glob(NOTES_PATTERN)
-        await Promise.all(markdownFilenames.map(filename => processFile(filename, template)))
+        await Promise.all(markdownFilenames.map(filename => processFile(filename)))
         console.log('All files processed successfully')
     } catch (error) {
         console.error('An error occurred during processing:', error)
