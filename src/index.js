@@ -33,25 +33,6 @@ const findAssetReferences = (markdownContent) => {
     return paths;
 }
 
-const readFile = async (filename) => {
-    try {
-        const rawFile = await fs.readFile(filename, 'utf8')
-        const { data, content } = matter(rawFile)
-        const html = marked(content)
-        return { ...data, content: html }
-    } catch (error) {
-        console.error(`Error reading file ${filename}:`, error)
-        throw error
-    }
-}
-
-const templatize = (template, { title, date, content }) => {
-    return template
-        .replace(/{{ content }}/g, content)
-        .replace(/{{ title }}/g, title)
-        .replace(/{{ date }}/g, date)
-}
-
 const getOutputFilename = (filename) => {
     const relativePath = path.relative(path.join(SRC_PATH, 'notes'), filename)
     const dirname = path.dirname(relativePath)
@@ -79,10 +60,8 @@ const copyAssets = async (assetReferences, srcDir, destDir, content) => {
         try {
             await mkdirp(path.dirname(destPath));
             
-            // Check if the file is an image that can be converted to WebP
             const ext = path.extname(srcPath).toLowerCase();
             if (['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext)) {
-                // Convert to WebP
                 const webpDestPath = destPath.replace(ext, '.webp');
                 await sharp(srcPath)
                     .resize({ width: 1200, withoutEnlargement: true })
@@ -90,10 +69,8 @@ const copyAssets = async (assetReferences, srcDir, destDir, content) => {
                     .toFile(webpDestPath);
                 console.log(`Converted and copied asset: ${srcPath} -> ${webpDestPath}`);
                 
-                // Update the reference in the content
                 updatedContent = updatedContent.replace(ref, ref.replace(ext, '.webp'));
             } else {
-                // For non-image files, just copy
                 await fs.copyFile(srcPath, destPath);
                 console.log(`Copied asset: ${srcPath} -> ${destPath}`);
             }
@@ -103,14 +80,12 @@ const copyAssets = async (assetReferences, srcDir, destDir, content) => {
             } else {
                 console.error(`Error processing asset ${srcPath}:`, error);
             }
-            // Continue processing other assets
         }
     }
     return updatedContent;
 }
 
 const getTemplateFile = (layout) => {
-    // Assume layout always includes the file extension
     return path.join(SRC_PATH, 'layouts', layout)
 }
 
@@ -120,25 +95,21 @@ const processFile = async (filename) => {
         const { data, content: originalContent } = matter(fileContent)
         const assetReferences = findAssetReferences(originalContent)
         
-        // Copy assets and get updated content
         const updatedContent = await copyAssets(assetReferences, SRC_PATH, OUT_PATH, originalContent)
 
         let renderedHtml
         if (data.layout) {
-            // If layout is specified, use the template
             const templateFile = getTemplateFile(data.layout)
             const template = await fs.readFile(templateFile, 'utf8')
             
             const html = marked(updatedContent)
             
-            // Use ejs to render the template
             renderedHtml = ejs.render(template, {
                 date: data.date,
                 title: data.title,
                 content: html
             })
         } else {
-            // If no layout is specified, just convert markdown to HTML
             renderedHtml = marked(updatedContent)
         }
         
